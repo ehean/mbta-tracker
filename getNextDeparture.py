@@ -6,7 +6,6 @@ import argparse
 import constants
 
 
-
 def argumentParser():
     argParser = argparse.ArgumentParser("This Python script returns the next predicted departure time for an MBTA for a given stop and routle")
     argParser.add_argument("-s", "--stop", help="This is the stop to provide (e.g. North+Station)", action="store")
@@ -68,27 +67,66 @@ def printResponseDetails(response):
     print(response.request.url)
     pprint.pprint(response.json())
 
-def getNextDepartureTime(attribute):
+def getPredictedTimeFromAttribute(attribute):
     if "departure_time" in attribute and attribute["departure_time"] != None:
         if "arrival_time" in attribute and attribute["arrival_time"] != None:
-            departureTime = attribute["arrival_time"]
+            predictedTime = attribute["arrival_time"]
         else:
-            departureTime = attribute["departure_time"]
+            predictedTime = attribute["departure_time"]
         
-        departureTime = datetime.datetime.fromisoformat(departureTime)
-        return departureTime.time()
+        predictedTime = datetime.datetime.fromisoformat(predictedTime)
+        return predictedTime
+
+def getDisplayValueFromAttribute(attribute):
+    displayValue = ""
+    status = getStatusFromAttribute(attribute)
+    if status == None or status != "STOPPED_AT":
+        predictedTime = getPredictedTimeFromAttribute(attribute)
+        if predictedTime != None:
+            print(predictedTime)
+            secondsAway = getSecondsAwayFromDateTime(predictedTime)
+            print(secondsAway)
+            if status == "STOPPED_AT":
+                if secondsAway <= 90:
+                    displayValue = "Boarding"
+                else:
+                    displayValue = status
+            elif secondsAway <= 30:
+                displayValue = "Arriving"
+            elif secondsAway <= 60:
+                displayValue = "Approaching"
+            elif secondsAway <= 89:
+                displayValue = "1 minute"
+            else:
+                displayValue = str(int(round(secondsAway/60.0))) + " minutes"
+    else:
+        displayValue = status
+    
+    return displayValue
+            
+             
+     
                 
-def printNextDepartureTime(time):
+def printNextDepartureTimeFromDatetime(time):
     if time != None:
         print(time.strftime("%I:%M %p"))
 
-def getStatus(attribute):
+def getStatusFromAttribute(attribute):
     return attribute["status"]  
     
 def printStatus(status):
     if status != None:
         print(status)
 
+def getSecondsAwayFromDateTime(time):
+    if time != None:
+        now = datetime.datetime.now()
+        now = now.replace(tzinfo=constants.UTC_ZONE)
+        now = now.astimezone(constants.EST_ZONE)
+        return (time - now).total_seconds()
+    else:
+        return None
+        
 
 args = argumentParser()
 requestParams = getRequestParams(args)
@@ -96,6 +134,5 @@ response = sendRequest("predictions", requestParams)
 #printResponseDetails(response)
 data = validateResponse(response)
 if data != []:
-    time = getNextDepartureTime(data[0]["attributes"])
-    printStatus(getStatus(data[0]["attributes"]))
-    printNextDepartureTime(time)
+    displayValue = getDisplayValueFromAttribute(data[0]["attributes"])
+    print(displayValue)
