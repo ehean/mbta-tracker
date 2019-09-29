@@ -1,4 +1,7 @@
+from dateutil import  tz
 API_KEY="43a45acc39ad4b2cb73936d6fd8f047a"
+UTC_ZONE=tz.gettz('UTC')
+EST_ZONE=tz.gettz('America/New_York')
 REQUEST_HEADER={
     "X-API-Key": API_KEY
 }
