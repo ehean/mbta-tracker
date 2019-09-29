@@ -1,0 +1,17 @@
+FROM ubuntu:latest
+
+RUN echo "set tabstop=4 shiftwidth=4 expandtab" > ~/.vimrc 
+
+RUN apt-get update && apt-get install -y \
+    python3.7 \
+    python3-pip \
+    python3-requests \
+    vim 
+#    python3-flask \
+#    python3-boto3 \
+
+COPY getNextDeparture.py /apps/getNextDeparture.py
+COPY constants.py /apps/constants.py
+COPY getAllResources.py /apps/getAllResources.py
+
+ENTRYPOINT tail -f /dev/null

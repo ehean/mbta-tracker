@@ -4,7 +4,6 @@ import urllib.parse
 import datetime
 import argparse
 import constants
-import routesMap
 
 
 
@@ -16,44 +15,52 @@ def argumentParser():
     args = argParser.parse_args()
     return args
 
-def validateArguments(args):
-    if args.direction not in constants.DIRECTION_MAP:
-        raise Exception("Provided direction " + args.direction + " is not a valid direction.")
-    if args.route not in routesMap.ROUTES_MAP:
-        raise Exception("Provided route " + args.route + " is not a valid route.")
-    if args.stop not in routesMap.ROUTES_MAP[args.route]:
-        raise Exception("Provided stop " + args.stop + " is not in route: " + args.route + ".")
-
-def getRequestParams(args):
-    validateArguments(args)
-
-    stop=urllib.parse.unquote_plus(routesMap.ROUTES_MAP[args.route][args.stop])
-    route=urllib.parse.unquote_plus(args.route)
-    direction=constants.DIRECTION_MAP[args.direction]
-    requestParams={
-        "filter[stop]": stop,
-        "filter[route]": route,
-        "filter[direction_id]": direction
-    }
-    return requestParams
-
-def sendRequest(args):
-    requestParams = getRequestParams(args)
+def sendRequest(path, requestParams):
     response = requests.get(
-        constants.MBTA_API_ENDPOINT + "predictions/",
+        constants.MBTA_API_ENDPOINT + path,
         headers=constants.REQUEST_HEADER,
         params=requestParams
     )
     return response
 
+def validateArguments(args):
+    if args.direction not in constants.DIRECTION_MAP:
+        raise Exception("Provided direction " + args.direction + " is not a valid direction.")
+    if args.route not in constants.ROUTE_LIST:
+        raise Exception("Provided route " + args.route + " is not a valid route.")
+
+def getStopId(args):
+    stopRequestParams={"filter[route]": args.route}
+    stopResponse = sendRequest("stops", stopRequestParams)
+    if stopResponse.status_code == 200:
+        stopResponse = stopResponse.json()
+        for stop in stopResponse["data"]:
+            if stop["attributes"]["name"] == args.stop:
+                return stop["id"] 
+        raise Exception("Could not find stop " + args.stop + " in route " + args.route + ".")
+    else:
+        print(response.request.url)
+        raise Exception("/stops request failed.") 
+
+def getRequestParams(args):
+    validateArguments(args)
+
+    stopId=urllib.parse.unquote_plus(getStopId(args))
+    route=urllib.parse.unquote_plus(args.route)
+    direction=constants.DIRECTION_MAP[args.direction]
+    requestParams={
+        "filter[stop]": stopId,
+        "filter[route]": route,
+        "filter[direction_id]": direction
+    }
+    return requestParams
+
+
 def validateResponse(response):
     if response.status_code == 200:
         responseJson = response.json()
         if "data" in responseJson:
-            data = responseJson["data"]
-            if data != []:
-                attributes = data[0]["attributes"]
-                return attributes
+            return responseJson["data"]
 
 def printResponseDetails(response):
     print(response.status_code)
@@ -61,23 +68,34 @@ def printResponseDetails(response):
     print(response.request.url)
     pprint.pprint(response.json())
 
-def printNextDepartureTime(response):
-    attributes = validateResponse(response)
+def getNextDepartureTime(attribute):
+    if "departure_time" in attribute and attribute["departure_time"] != None:
+        if "arrival_time" in attribute and attribute["arrival_time"] != None:
+            departureTime = attribute["arrival_time"]
+        else:
+            departureTime = attribute["departure_time"]
+        
+        departureTime = datetime.datetime.fromisoformat(departureTime)
+        return departureTime.time()
+                
+def printNextDepartureTime(time):
+    if time != None:
+        print(time.strftime("%I:%M %p"))
 
-    if attributes != None:
-        if "departure_time" in attributes and attributes["departure_time"] != None:
-            if "arrival_time" in attributes and attributes["arrival_time"] != None:
-                departureTime = attributes["arrival_time"]
-            else:
-                departureTime = attributes["departure_time"]
-            
-            departureTime = datetime.datetime.fromisoformat(departureTime)
-            departureTime = departureTime.time()
-            print("Departure Time: ")
-            print(departureTime.strftime("%I:%M %p"))
+def getStatus(attribute):
+    return attribute["status"]  
+    
+def printStatus(status):
+    if status != None:
+        print(status)
 
 
 args = argumentParser()
-response = sendRequest(args)
-printResponseDetails(response)
-printNextDepartureTime(response)
+requestParams = getRequestParams(args)
+response = sendRequest("predictions", requestParams)
+#printResponseDetails(response)
+data = validateResponse(response)
+if data != []:
+    time = getNextDepartureTime(data[0]["attributes"])
+    printStatus(getStatus(data[0]["attributes"]))
+    printNextDepartureTime(time)
