@@ -1,4 +1,6 @@
 FROM ubuntu:latest
+ENV TZ=America/New_York
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update && apt-get install -y \
     python3.7 \
@@ -6,6 +8,8 @@ RUN apt-get update && apt-get install -y \
     python3-dateutil \
     python3-pip
 #    python3-boto3 \
+RUN rm /usr/bin/python3
+RUN ln -s /usr/bin/python3.7 /usr/bin/python3
 RUN pip3 install pyyaml
 
 RUN mkdir /apps
