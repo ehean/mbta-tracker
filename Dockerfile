@@ -4,9 +4,9 @@ RUN apt-get update && apt-get install -y \
     python3.7 \
     python3-requests \
     python3-dateutil \
-    python3-curses \
-    python3-pyyaml
+    python3-pip
 #    python3-boto3 \
+RUN pip3 install pyyaml
 
 RUN mkdir /apps
 COPY main.py /apps/main.py

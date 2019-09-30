@@ -1,9 +1,16 @@
 from dateutil import  tz
+
+CONNECTION_TIMEOUT=3.00
+RESPONSE_TIMEOUT=None
 API_KEY="43a45acc39ad4b2cb73936d6fd8f047a"
 UTC_ZONE=tz.gettz('UTC')
 EST_ZONE=tz.gettz('America/New_York')
-REQUEST_HEADER={
+REQUEST_HEADER_REQ={
     "X-API-Key": API_KEY
+}
+REQUEST_HEADER_STREAM={
+    "X-API-Key": API_KEY,
+    "accept": "text/event-stream"
 }
 MBTA_API_ENDPOINT="https://api-v3.mbta.com/"
 DIRECTION_MAP={
