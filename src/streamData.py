@@ -8,8 +8,10 @@ import argparse
 import yaml
 import constants
 from predictionClass import Predictions
+from predictionClass import predictions
 
-def openStreaming(resource, requestParams, predictions):
+
+def openStreaming(resource, requestParams):
     response = sendStreamingRequest(resource, requestParams)
     
     event=""

@@ -62,7 +62,7 @@ def getRequestParams(args):
     return requestParams
 
 def signalHandler(sig, frame):
-    curses.endwin()
+#    curses.endwin()
     sys.exit(0)
 
 signal.signal(signal.SIGINT, signalHandler)
@@ -70,9 +70,9 @@ signal.signal(signal.SIGINT, signalHandler)
 args = argumentParser()
 requestParams = getRequestParams(args)
 
-predictions = Predictions(args.route, args.stop)
-streamingThread = threading.Thread(target=streamData.openStreaming, args=("predictions", requestParams, predictions))
-clientThread = threading.Thread(target=sendToClient.printToConsole, args=(predictions,))
+#predictions = Predictions(args.route, args.stop)
+streamingThread = threading.Thread(target=streamData.openStreaming, args=("predictions", requestParams))
+clientThread = threading.Thread(target=sendToClient.initClientApi)
 
 streamingThread.start()
 clientThread.start()

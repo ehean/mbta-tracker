@@ -1,10 +1,9 @@
-import pprint
 
 class Predictions:
-    def __init__(self, route, stop):
+    def __init__(self):
         self.data = []
-        self.route = route
-        self.stop = stop
+        self.route = ""
+        self.stop = ""
 
     def eventHandler(self, response):
         if response["event"] == "reset":
@@ -32,3 +31,6 @@ class Predictions:
         for prediction in self.data:
             if prediction["id"] == response["id"]:
                 self.data.remove(prediction)
+
+predictions = Predictions()
+
