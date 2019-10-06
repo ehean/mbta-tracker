@@ -17,7 +17,9 @@ COPY /src/main.py /apps/main.py
 COPY /src/constants.py /apps/constants.py
 COPY /src/predictionClass.py /apps/predictionClass.py
 COPY /src/streamData.py /apps/streamData.py
-COPY /src/sendToClient.py /apps/sendToClient.py
+COPY /src/clientApiHandler.py /apps/clientApiHandler.py
+
+EXPOSE 5002/tcp
 
 WORKDIR /apps
 ENTRYPOINT ["python3.7", "main.py"]

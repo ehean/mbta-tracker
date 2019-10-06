@@ -1,46 +1,10 @@
 import sys
 import curses
 from pprint import pprint
-import requests
-import urllib.parse
 import datetime
-import argparse
 import yaml
 import constants
 from time import sleep
-from predictionClass import Predictions
-from predictionClass import predictions
-from flask import Flask, request
-from flask_restful import Resource, Api
-import json
-#from main import predictions
-
-def initClientApi():
-    app = Flask(__name__)
-    api = Api(app)
-    api.add_resource(Prediction, '/prediction')
-    app.run(port='5002')
-
-
-class Response:
-    def __init__(self):
-        self.body = { "data": [] }
-
-    def setBody(self):
-        for p in predictions.data:
-            pprint(p)
-            respData = {
-                "status": p["attributes"]["status"],
-                "predictedTime": getPredictedIsoTimeFromAttribute(p["attributes"]),
-                "alert": None
-            }
-            self.body["data"].append(respData)
-
-class Prediction(Resource):
-    def get(self):
-        resp = Response()
-        resp.setBody()
-        return json.dumps(resp.body)
 
 def printToConsole(predictions):
     screen = curses.initscr()
