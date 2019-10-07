@@ -1,0 +1,41 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "mbta-tracker-dev"
+  namespace: "default"
+  labels:
+    app: "mbta-tracker-dev"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "mbta-tracker-dev"
+  template:
+    metadata:
+      labels:
+        app: "mbta-tracker-dev"
+    spec:
+      containers:
+      - name: "mbta-tracker"
+        image: "erikheaney/mbta-tracker:dev-box"
+---
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "mbta-tracker-dev-hpa"
+  namespace: "default"
+  labels:
+    app: "mbta-tracker-dev"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "mbta-tracker-dev"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      targetAverageUtilization: 80

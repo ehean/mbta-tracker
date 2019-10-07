@@ -5,7 +5,7 @@ import urllib.parse
 import argparse
 import constants
 import streamData
-import sendToClient
+from clientApiHandler import initClientApi
 import threading
 from predictionClass import Predictions
 import curses
@@ -62,17 +62,20 @@ def getRequestParams(args):
     return requestParams
 
 def signalHandler(sig, frame):
-    curses.endwin()
+#    curses.endwin()
     sys.exit(0)
 
 signal.signal(signal.SIGINT, signalHandler)
 
-args = argumentParser()
-requestParams = getRequestParams(args)
+#args = argumentParser()
+#requestParams = getRequestParams(args)
+requestParams = {
+    "filter[route]": constants.ROUTES
+}
 
-predictions = Predictions(args.route, args.stop)
-streamingThread = threading.Thread(target=streamData.openStreaming, args=("predictions", requestParams, predictions))
-clientThread = threading.Thread(target=sendToClient.printToConsole, args=(predictions,))
+#predictions = Predictions(args.route, args.stop)
+streamingThread = threading.Thread(target=streamData.openStreaming, args=("predictions", requestParams))
+clientThread = threading.Thread(target=initClientApi)
 
 streamingThread.start()
 clientThread.start()

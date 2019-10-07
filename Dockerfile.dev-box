@@ -1,18 +1,29 @@
 FROM ubuntu:latest
+ENV TZ=America/New_York
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN echo "set tabstop=4 shiftwidth=4 expandtab" > ~/.vimrc 
 
 RUN apt-get update && apt-get install -y \
     python3.7 \
-    python3-pip \
     python3-requests \
     python3-dateutil \
+    python3-pip \ 
     vim 
-#    python3-flask \
 #    python3-boto3 \
 
-COPY getNextDeparture.py /apps/getNextDeparture.py
-COPY constants.py /apps/constants.py
-COPY getAllResources.py /apps/getAllResources.py
+RUN rm /usr/bin/python3
+RUN ln -s /usr/bin/python3.7 /usr/bin/python3
+RUN pip3 install pyyaml pytest flask flask_restful
 
+RUN mkdir /apps
+COPY src/main.py /apps/main.py
+COPY src/constants.py /apps/constants.py
+COPY src/predictionClass.py /apps/predictionClass.py
+COPY src/streamData.py /apps/streamData.py
+COPY src/clientApiHandler.py /apps/clientApiHandler.py
+
+EXPOSE 5002
+
+WORKDIR /apps
 ENTRYPOINT tail -f /dev/null
