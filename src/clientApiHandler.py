@@ -1,30 +1,37 @@
 import constants
 from predictionClass import predictions
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_restful import Resource, Api, reqparse
-import json
+from pprint import pprint
+import requests
 
 def initClientApi():
     app = Flask(__name__)
     api = Api(app)
     api.add_resource(Prediction, '/prediction')
-    app.run(port='5002')
+    app.run(port='5002', host='0.0.0.0')
 
 class Response:
     def __init__(self):
         self.body = { "data": [] }
 
     def setBody(self, args):
-        for p in predictions.data:
-            if args["route"] == p["relationships"]["route"]["data"]["id"]:
-                if args["stop"] == p["relationships"]["stop"]["data"]["id"]:
-                    if args["direction"] == p["attributes"]["direction_id"]:
+        if args["route"] in predictions.data:
+            if args["stop"] in predictions.data[args["route"]]:
+                if int(args["direction"]) in predictions.data[args["route"]][args["stop"]]:
+                    for p in predictions.data[args["route"]][args["stop"]][int(args["direction"])]:
                         respData = {
                             "status": p["attributes"]["status"],
                             "predictedTime": getPredictedIsoTimeFromAttribute(p["attributes"]),
                             "alert": None
                         }
                         self.body["data"].append(respData)
+                else:
+                    self.body = { "error": "Direction Id " + str(args["direction"]) + " not found."}
+            else:
+                self.body = { "error": "Stop Id " + args["stop"] + " not found."}
+        else:
+            self.body = { "error": "Route Id " + args["route"] + " not found."}
 
 class Prediction(Resource):
     def __init__(self):
@@ -36,7 +43,7 @@ class Prediction(Resource):
         args = self.parser.parse_args() 
         resp = Response()
         resp.setBody(args)
-        return json.dumps(resp.body)
+        return jsonify(resp.body)
 
 def getPredictedIsoTimeFromAttribute(attribute):
     predictedTime = None
@@ -46,3 +53,4 @@ def getPredictedIsoTimeFromAttribute(attribute):
         predictedTime = attribute["departure_time"]
 
     return predictedTime
+

@@ -17,6 +17,7 @@ DIRECTION_MAP={
     "outbound": 0,
     "inbound": 1
 }
+ROUTES="Red,Blue,Orange"
 ROUTE_LIST=[
     "Red",
     "Mattapan",

@@ -67,9 +67,11 @@ def signalHandler(sig, frame):
 
 signal.signal(signal.SIGINT, signalHandler)
 
-args = argumentParser()
-requestParams = getRequestParams(args)
-#requestParams = {}
+#args = argumentParser()
+#requestParams = getRequestParams(args)
+requestParams = {
+    "filter[route]": constants.ROUTES
+}
 
 #predictions = Predictions(args.route, args.stop)
 streamingThread = threading.Thread(target=streamData.openStreaming, args=("predictions", requestParams))
