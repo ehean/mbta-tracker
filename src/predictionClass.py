@@ -38,7 +38,10 @@ class Predictions:
             raise Exception("/stops request failed.")
 
     def getParentStopFromChildStop(self, childStopId):
-        return self.childStopIdMap[childStopId]
+        if childStopId in self.childStopIdMap:
+            return self.childStopIdMap[childStopId]
+        else:
+            return None
 
     def getRouteIdFromResponse(self, response):
         return response["relationships"]["route"]["data"]["id"]
@@ -71,12 +74,13 @@ class Predictions:
             if route not in self.data:
                 self.data[route] = {}
             parentStop = self.getParentStopFromChildStop(self.getChildStopIdFromResponse(resp))
-            if parentStop not in self.data[route]:
-                self.data[route][parentStop] = {}
-            direction = self.getDirectionIdFromResponse(resp)
-            if direction not in self.data[route][parentStop]:
-                self.data[route][parentStop][direction] = []
-            self.data[route][parentStop][direction].append(resp)
+            if parentStop != None:
+                if parentStop not in self.data[route]:
+                    self.data[route][parentStop] = {}
+                direction = self.getDirectionIdFromResponse(resp)
+                if direction not in self.data[route][parentStop]:
+                    self.data[route][parentStop][direction] = []
+                self.data[route][parentStop][direction].append(resp)
                 
     def handleUpdateEvent(self, resp):
         route = self.getRouteIdFromResponse(resp)

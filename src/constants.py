@@ -17,7 +17,7 @@ DIRECTION_MAP={
     "outbound": 0,
     "inbound": 1
 }
-ROUTES="Red,Blue,Orange"
+ROUTES="Red,Blue,Orange,Green-B,Green-C,Green-D,Green-E,CR-Fairmount,CR-Fitchburg,CR-Worcester,CR-Franklin,CR-Greenbush,CR-Haverhill,CR-Kingston,CR-Lowell,CR-Middleborough,CR-Needham,CR-Newburyport,CR-Providence,CR-Foxboro"
 ROUTE_LIST=[
     "Red",
     "Mattapan",
