@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y \
     python3-requests \
     python3-dateutil \
     python3-pip
-#    python3-boto3 \
+
 RUN rm /usr/bin/python3
 RUN ln -s /usr/bin/python3.7 /usr/bin/python3
 RUN pip3 install pyyaml flask flask_restful
@@ -19,7 +19,7 @@ COPY /src/predictionClass.py /apps/predictionClass.py
 COPY /src/streamData.py /apps/streamData.py
 COPY /src/clientApiHandler.py /apps/clientApiHandler.py
 
-EXPOSE 5002/tcp
+EXPOSE 5002
 
 WORKDIR /apps
 ENTRYPOINT ["python3.7", "main.py"]
