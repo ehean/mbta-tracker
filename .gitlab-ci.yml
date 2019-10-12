@@ -6,7 +6,7 @@ stages:
 build-image:
   stage: build
   script:
-    - docker build -t mbta-tracker .
+    - docker build -t web-api .
 #    - docker run registry.gitlab.com/ehean/mbta-tracker:latest pytest
-    - docker tag mbta-tracker registry.gitlab.com/ehean/mbta-tracker
+    - docker tag web-api registry.gitlab.com/ehean/mbta-tracker/web-api
     - docker push registry.gitlab.com/ehean/mbta-tracker/web-api
