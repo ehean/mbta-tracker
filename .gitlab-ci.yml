@@ -9,4 +9,4 @@ build-image:
     - docker build -t mbta-tracker .
 #    - docker run registry.gitlab.com/ehean/mbta-tracker:latest pytest
     - docker tag mbta-tracker registry.gitlab.com/ehean/mbta-tracker
-    - docker push registry.gitlab.com/ehean/mbta-tracker
+    - docker push registry.gitlab.com/ehean/mbta-tracker/web-api
