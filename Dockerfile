@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN rm /usr/bin/python3
 RUN ln -s /usr/bin/python3.7 /usr/bin/python3
-RUN pip3 install pyyaml flask flask_restful
+RUN pip3 install pyyaml flask flask_restful circuitbreaker
 
 RUN mkdir /apps
 COPY /src/main.py /apps/main.py
@@ -18,8 +18,10 @@ COPY /src/constants.py /apps/constants.py
 COPY /src/predictionClass.py /apps/predictionClass.py
 COPY /src/streamData.py /apps/streamData.py
 COPY /src/clientApiHandler.py /apps/clientApiHandler.py
+COPY /src/readinessCheck.py /apps/readinessCheck.py
 
-EXPOSE 5002
+EXPOSE 5000
+EXPOSE 6000
 
 WORKDIR /apps
 ENTRYPOINT ["python3.7", "main.py"]

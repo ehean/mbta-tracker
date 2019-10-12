@@ -6,9 +6,11 @@ import argparse
 import constants
 import streamData
 from clientApiHandler import initClientApi
+from readinessCheck import initReadinessCheck
 import threading
 from predictionClass import Predictions
 import curses
+from circuitbreaker import circuit
 
 
 def argumentParser():
@@ -19,6 +21,7 @@ def argumentParser():
     args = argParser.parse_args()
     return args
 
+@circuit(failure_threshold=5, expected_exception=requests.RequestException)
 def sendRequest(path, requestParams):
     response = requests.get(
         constants.MBTA_API_ENDPOINT + path,
@@ -76,9 +79,12 @@ requestParams = {
 #predictions = Predictions(args.route, args.stop)
 streamingThread = threading.Thread(target=streamData.openStreaming, args=("predictions", requestParams))
 clientThread = threading.Thread(target=initClientApi)
+readinessThread = threading.Thread(target=initReadinessCheck)
 
 streamingThread.start()
 clientThread.start()
+readinessThread.start()
 
 streamingThread.join()
-streamingThread.join()
+clientThread.join()
+readinessThread.join()
