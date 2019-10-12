@@ -22,6 +22,7 @@ COPY src/constants.py /apps/constants.py
 COPY src/predictionClass.py /apps/predictionClass.py
 COPY src/streamData.py /apps/streamData.py
 COPY src/clientApiHandler.py /apps/clientApiHandler.py
+COPY tests/
 
 EXPOSE 5002
 

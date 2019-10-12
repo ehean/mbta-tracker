@@ -1,0 +1,5 @@
+pyyaml
+pytest
+flask
+flask_restful
+circuitbreaker
