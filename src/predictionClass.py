@@ -1,13 +1,16 @@
 from pprint import pprint
 import constants
 import requests
+from circuitbreaker import circuit
 
 class Predictions:
     def __init__(self):
         self.data = {}
         self.stopIdMap = {}
         self.childStopIdMap = {}
+        self.ready = False
     
+    @circuit(failure_threshold=5, expected_exception=requests.RequestException)
     def sendRequest(self, path, requestParams):
         response = requests.get(
             constants.MBTA_API_ENDPOINT + path,
@@ -81,6 +84,7 @@ class Predictions:
                 if direction not in self.data[route][parentStop]:
                     self.data[route][parentStop][direction] = []
                 self.data[route][parentStop][direction].append(resp)
+        self.ready = True
                 
     def handleUpdateEvent(self, resp):
         route = self.getRouteIdFromResponse(resp)
