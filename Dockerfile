@@ -20,8 +20,8 @@ COPY /src/streamData.py /apps/streamData.py
 COPY /src/clientApiHandler.py /apps/clientApiHandler.py
 COPY /src/readinessCheck.py /apps/readinessCheck.py
 
+EXPOSE 443
 EXPOSE 5000
-EXPOSE 6000
 
 WORKDIR /apps
 ENTRYPOINT ["python3.7", "main.py"]

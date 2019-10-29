@@ -9,7 +9,7 @@ def initClientApi():
     app = Flask(__name__)
     api = Api(app)
     api.add_resource(Prediction, '/prediction')
-    app.run(port='5002', host='0.0.0.0')
+    app.run(port='443', host='0.0.0.0')
 
 class Response:
     def __init__(self):

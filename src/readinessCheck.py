@@ -8,7 +8,7 @@ def initReadinessCheck():
     app = Flask(__name__)
     readinessCheck = Api(app)
     readinessCheck.add_resource(Readiness, '/readiness')
-    app.run(port='6000', host='0.0.0.0')
+    app.run(port='5000', host='0.0.0.0')
 
 class Readiness(Resource):
     def get(self):
