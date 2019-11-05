@@ -1,0 +1,73 @@
+POST https://container.googleapis.com/v1beta1/projects/mbta-tracker-255115/zones/northamerica-northeast1-a/clusters
+{
+  "cluster": {
+    "name": "mbta-tracker-backend-clone-1",
+    "masterAuth": {
+      "clientCertificateConfig": {}
+    },
+    "loggingService": "none",
+    "monitoringService": "none",
+    "network": "projects/mbta-tracker-255115/global/networks/default",
+    "addonsConfig": {
+      "httpLoadBalancing": {
+        "disabled": true
+      },
+      "horizontalPodAutoscaling": {},
+      "kubernetesDashboard": {
+        "disabled": true
+      },
+      "istioConfig": {
+        "disabled": true
+      }
+    },
+    "subnetwork": "projects/mbta-tracker-255115/regions/northamerica-northeast1/subnetworks/default",
+    "nodePools": [
+      {
+        "name": "default-pool",
+        "config": {
+          "machineType": "f1-micro",
+          "diskSizeGb": 10,
+          "oauthScopes": [
+            "https://www.googleapis.com/auth/devstorage.read_only",
+            "https://www.googleapis.com/auth/logging.write",
+            "https://www.googleapis.com/auth/monitoring",
+            "https://www.googleapis.com/auth/servicecontrol",
+            "https://www.googleapis.com/auth/service.management.readonly",
+            "https://www.googleapis.com/auth/trace.append"
+          ],
+          "metadata": {
+            "disable-legacy-endpoints": "true"
+          },
+          "imageType": "COS",
+          "diskType": "pd-standard",
+          "shieldedInstanceConfig": {}
+        },
+        "initialNodeCount": 3,
+        "autoscaling": {},
+        "management": {
+          "autoUpgrade": true,
+          "autoRepair": true
+        },
+        "maxPodsConstraint": {
+          "maxPodsPerNode": "110"
+        },
+        "version": "1.13.11-gke.9"
+      }
+    ],
+    "networkPolicy": {},
+    "ipAllocationPolicy": {
+      "useIpAliases": true
+    },
+    "masterAuthorizedNetworksConfig": {},
+    "defaultMaxPodsConstraint": {
+      "maxPodsPerNode": "110"
+    },
+    "authenticatorGroupsConfig": {},
+    "privateClusterConfig": {},
+    "databaseEncryption": {
+      "state": "DECRYPTED"
+    },
+    "initialClusterVersion": "1.13.11-gke.9",
+    "location": "northamerica-northeast1-a"
+  }
+}
