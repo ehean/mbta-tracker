@@ -1,0 +1,4 @@
+gcloud components install kubectl
+gcloud config set project PROJECT_ID
+gcloud config set compute/zone COMPUTE_ZONE
+gcloud container clusters get-credentials CLUSTER_NAME

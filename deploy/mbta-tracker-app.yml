@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mbta-tracker-backend-deployment
+  labels:
+    app: mbta-tracker-backend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mbta-tracker-backend-pod
+  template:
+    metadata:
+      labels:
+        app: mbta-tracker-backend-pod
+    spec:
+      containers:
+      - name: mbta-tracker-backend-container
+        image: erikhean/mbta-tracker:web-api
+        ports:
+        - containerPort: 443
+          name: client-port
+        - containerPort: 5000
+          name: readiness-port
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: mbta-tracker-backend-service
+spec:
+  selector:
+    app: mbta-tracker-backend-pod
+  ports:
+  - protocol: TCP
+    port: 443
+    targetPort: 443
+    name: client-port
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000
+    name: readiness-port
+
