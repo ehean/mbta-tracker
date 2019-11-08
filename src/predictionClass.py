@@ -1,6 +1,7 @@
 from pprint import pprint
 import constants
 import requests
+from log import logger
 from circuitbreaker import circuit
 
 class Predictions:
@@ -76,23 +77,27 @@ class Predictions:
         route = self.getRouteIdFromResponse(resp)
         if route not in self.data:
             self.data[route] = {}
-            parentStop = self.getParentStopFromChildStop(self.getChildStopIdFromResponse(resp))
-            if parentStop != None:
-                if parentStop not in self.data[route]:
-                    self.data[route][parentStop] = {}
-                direction = self.getDirectionIdFromResponse(resp)
-                if direction not in self.data[route][parentStop]:
-                    self.data[route][parentStop][direction] = []
-                self.data[route][parentStop][direction].append(resp)
+        parentStop = self.getParentStopFromChildStop(self.getChildStopIdFromResponse(resp))
+        if parentStop != None:
+            if parentStop not in self.data[route]:
+                self.data[route][parentStop] = {}
+            direction = self.getDirectionIdFromResponse(resp)
+            if direction not in self.data[route][parentStop]:
+                self.data[route][parentStop][direction] = []
+            self.data[route][parentStop][direction].append(resp)
  
     def eventHandler(self, response):
         if response["event"] == "reset":
+            logger.debug("RESET event received.")
             self.handleResetEvent(response)
         elif response["event"] == "update":
+            logger.debug("UPDATE event received.")
             self.handleUpdateEvent(response["data"])
         elif response["event"] == "add":
+            logger.debug("ADD event received.")
             self.handleAddEvent(response["data"])
         elif response["event"] == "remove":
+            logger.debug("REMOVE event received.")
             self.handleRemoveEvent(response["data"])
 
     def handleResetEvent(self, response):
@@ -118,16 +123,8 @@ class Predictions:
                 pred = resp
 
     def handleAddEvent(self, resp):
-        route = self.getRouteIdFromResponse(resp)
-        if route not in self.data:
-            self.data[route] = {}
-        parentStop = self.getParentStopFromChildStop(self.getChildStopIdFromResponse(resp))
-        if parentStop not in self.data[route]:
-            self.data[route][parentStop] = {}
-        direction = self.getDirectionIdFromResponse(resp)
-        if direction not in self.data[route][parentStop]:
-            self.data[route][parentStop][direction] = []
-        self.data[route][parentStop][direction].append(resp)
+        self.addPredictionToIdMap(resp)
+        self.addPredictionToData(resp)
        
     def handleRemoveEvent(self, resp):
         pId = resp["id"]
@@ -143,15 +140,6 @@ class Predictions:
                             if prediction["id"] == resp["id"]:
                                 directionList.pop(index)
                                 self.idMap.pop(pId, None)
-                    
-                
-                
-#        for route in self.data.values():
-#            for stop in route.values():
-#                for direction in stop.values():
-#                    for index, prediction in enumerate(direction):
-#                        if prediction["id"] == resp["id"]:
-#                            direction.pop(index)
 
 predictions = Predictions()
 
