@@ -23,6 +23,7 @@ COPY src/predictionClass.py /apps/predictionClass.py
 COPY src/streamData.py /apps/streamData.py
 COPY src/clientApiHandler.py /apps/clientApiHandler.py
 COPY src/readinessCheck.py /apps/readinessCheck.py
+COPY src/log.py /apps/log.py
 
 EXPOSE 5002
 

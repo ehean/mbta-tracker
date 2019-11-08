@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify
 from flask_restful import Resource, Api, reqparse
 from pprint import pprint
 import requests
+from log import logger
 
 def initClientApi():
     app = Flask(__name__)
@@ -27,10 +28,13 @@ class Response:
                         }
                         self.body["data"].append(respData)
                 else:
+                    logger.info("Direction Id in request not found.")
                     self.body = { "error": "Direction Id " + str(args["direction"]) + " not found."}
             else:
+                logger.info("Stop Id in request not found.")
                 self.body = { "error": "Stop Id " + args["stop"] + " not found."}
         else:
+            logger.info("Route Id in request not found.")
             self.body = { "error": "Route Id " + args["route"] + " not found."}
 
 class Prediction(Resource):
