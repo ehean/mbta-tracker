@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: mbta-tracker-backend-container
-        image: erikhean/mbta-tracker:web-api
+        image: erikhean/mbta-tracker:0.0.2
         ports:
         - containerPort: 443
           name: client-port

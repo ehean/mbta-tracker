@@ -42,6 +42,8 @@ class Predictions:
             print(response.request.url)
             raise Exception("/stops request failed.")
 
+        logger.info("Finished creating stop id map.")
+
     def getParentStopFromChildStop(self, childStopId):
         if childStopId in self.childStopIdMap:
             return self.childStopIdMap[childStopId]
@@ -117,10 +119,11 @@ class Predictions:
         direction = self.getDirectionIdFromResponse(resp)
         if direction not in self.data[route][parentStop]:
             self.data[route][parentStop][direction] = []
-        self.data[route][parentStop][direction].append(resp)
         for pred in self.data[route][parentStop][direction]:
+            logger.debug(pred)
             if pred["id"] == resp["id"]:
-                pred = resp
+                logger.debug("Found prediction to update.")
+                pred.update(resp)
 
     def handleAddEvent(self, resp):
         self.addPredictionToIdMap(resp)
