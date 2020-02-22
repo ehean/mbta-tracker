@@ -15,9 +15,9 @@ This Python application uses the [MBTA v3 API](https://www.mbta.com/developers/v
 ```
 
 Run the following to pull the image from DockerHub:
-'''
+```
 docker pull erikhean/mbta-tracker
-'''
+```
 
 It was deployed to Google Cloud Platform via Kubernetes (it has since been removed to save costs until further development). The end goal is to develop a mobile app that provides prediction times, status, and alerts for a user's favorite rail lines. You can see the progress for the mobile app development [here](https://github.com/ehean/MBTA-Tracker-Mobile-App). 
 
